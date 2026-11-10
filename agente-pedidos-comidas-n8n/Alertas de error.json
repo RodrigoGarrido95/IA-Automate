@@ -1,0 +1,71 @@
+{
+  "name": "Alertas de error",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "64d810a7-aa86-45a4-8fe3-1dd72ad12576",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "rodrigogarrido13@gmail.com",
+        "subject": "=Falló el workflow {{ $json.workflow.name }}",
+        "emailType": "text",
+        "message": "=Error: {{ $json.execution.error.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "ca1e5982-6169-410b-b7ad-9baa73704394",
+      "name": "Send a message",
+      "webhookId": "2568501c-e699-4453-8057-169075bb9219",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kFOc0LiqUqLxS1Vh",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "jE9NWYpDfLgf0SvB",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "868dbc43-2438-4dc6-b6be-87bc24a8aaf3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "555b6ae24db72f44710b22a0daccd1dfc3ed1d17a530ddb82a61895db6c9a2b5"
+  },
+  "nodeGroups": [],
+  "id": "jE9NWYpDfLgf0SvB",
+  "tags": []
+}

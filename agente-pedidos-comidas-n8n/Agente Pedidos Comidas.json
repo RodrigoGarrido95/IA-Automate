@@ -1,0 +1,1037 @@
+{
+  "name": "Agente Pedidos Comidas",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ",
+          "mode": "list",
+          "cachedResultName": "Emprendimiento Comidas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 653349172,
+          "mode": "list",
+          "cachedResultName": "Pedidos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ/edit#gid=653349172"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -128
+      ],
+      "id": "58cfae7f-3c69-4b49-b4ce-15d3547db078",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "aE4QzagnE6Jz7gcL",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6122053d-f6c9-41f9-bf6c-a67c2f168715",
+              "name": "nombre",
+              "value": "={{ $json['Nombre'] }}",
+              "type": "string"
+            },
+            {
+              "id": "df691d53-c87a-4777-977a-4db356e11bc5",
+              "name": "email",
+              "value": "={{ $json['Email'] }}",
+              "type": "string"
+            },
+            {
+              "id": "b1877d83-b85b-4a49-8dad-8d5d01dc0f6d",
+              "name": "dia",
+              "value": "={{ $json[\"  Día del pedido  \"] }}",
+              "type": "string"
+            },
+            {
+              "id": "7fbe7d8f-79e2-4a73-b5a4-6217c53c3055",
+              "name": "plato",
+              "value": "={{ $json.Plato }}",
+              "type": "string"
+            },
+            {
+              "id": "5bf44378-c0bc-4db4-a88d-af526bd2135e",
+              "name": "cantidad",
+              "value": "={{ $json.Cantidad }}",
+              "type": "string"
+            },
+            {
+              "id": "f09f57e3-9644-49b0-a85f-a1543cac0b91",
+              "name": "marca temporal",
+              "value": "={{ $json[\"Marca temporal\"] }}",
+              "type": "string"
+            },
+            {
+              "id": "d456601c-7081-4bc6-a7d9-0f3916853aa4",
+              "name": "observaciones",
+              "value": "={{ $json.Observaciones }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        16,
+        -128
+      ],
+      "id": "0a942f6b-5511-4775-b944-dd1d209fb979",
+      "name": "Normalizar pedido"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ",
+          "mode": "list",
+          "cachedResultName": "Emprendimiento Comidas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Menu",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        -128
+      ],
+      "id": "5b215f8e-d71b-4696-baf1-8a99c8d7a7e2",
+      "name": "Leer menú",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "vOZx3Vdk2n2ZEIDq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "cbf8b33a-4b52-4192-be2c-489cce085204",
+              "leftValue": "={{ (() => { const norm = s => String(s ?? '').normalize('NFD').replace(/[\\u0300-\\u036f]/g, '').toLowerCase().trim(); const p = $('Normalizar pedido').first().json; return $json.menu.some(m => norm(m.Dia) === norm(p.dia) && norm(m.Plato) === norm(p.plato)); })() }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "56af383a-641b-46df-bafc-c35edbb16a28",
+              "leftValue": "={{ parseInt(String($('Normalizar pedido').first().json.cantidad).replace(/[^0-9]/g, '')) > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        688,
+        -128
+      ],
+      "id": "d574916a-7f77-4d7f-b244-9fb743fece1a",
+      "name": "Pedido válido?"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        960,
+        -240
+      ],
+      "id": "7fe5d5be-cb2f-442c-8b8b-8b7fdbeda620",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "8p2KH0IlNtLALLxP",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Consulta las políticas del emprendimiento: horarios, zonas de entrega, cantidad máxima, alérgenos de cada plato, cancelaciones y pedidos especiales. Usala siempre antes de decidir.",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.4,
+      "position": [
+        1088,
+        -240
+      ],
+      "id": "21266206-aaaa-4383-a9bf-2fc29760df8a",
+      "name": "consultar_politicas",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EV2XBZXUJnG2yeJe",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1088,
+        -32
+      ],
+      "id": "6d7a0a09-c75e-45a6-991a-06a3b1d27340",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "8p2KH0IlNtLALLxP",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"decision\": \"confirmar\",\n  \"mensaje_cliente\": \"Hola Ana, tu pedido de Milanesa con puré para el lunes está confirmado. ¡Gracias! El equipo\",\n  \"motivo_interno\": \"Plato en menú, stock suficiente y sin observaciones especiales.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1376,
+        -240
+      ],
+      "id": "a4b081a7-6763-4643-b440-d92f25a17cb1",
+      "name": "Structured Output Parser",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "menu",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        464,
+        -128
+      ],
+      "id": "97aa2b4c-6d46-4d6a-abac-6f715962e47e",
+      "name": "Menu"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.decision }}",
+                    "rightValue": "=confirmar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9e8fcaea-642b-48ae-9465-433265697348"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "ec5bcb8b-406c-4eea-9233-7053a9e70f23",
+                    "leftValue": "={{ $json.output.decision }}",
+                    "rightValue": "rechazar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "f1c4fa7d-d444-4d68-b2c9-fd375d33c086",
+                    "leftValue": "={{ $json.output.decision }}",
+                    "rightValue": "derivar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "a3d0657b-8e8c-45e1-85cc-55867e40cb0f",
+                    "leftValue": "={{ $json.output.decision }}",
+                    "rightValue": "pedir_datos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "ignoreCase": true,
+          "allMatchingOutputs": false
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        1472,
+        -608
+      ],
+      "id": "e3dc79e4-07ab-418b-a4dd-5dbe8b545de1",
+      "name": "Según decisión"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalizar pedido').first().json.email }}",
+        "subject": "Tu pedido - Emprendimiento Comidas",
+        "emailType": "text",
+        "message": "={{ $('Agente Pedidos').first().json.output.mensaje_cliente }}",
+        "options": {
+          "appendAttribution": true
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1952,
+        -608
+      ],
+      "id": "8f19cab2-5f5d-4e48-a3e7-06875b0aeda6",
+      "name": "Responder cliente",
+      "webhookId": "a14a3b79-db6e-41dd-91ec-33e804d4cb49",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kFOc0LiqUqLxS1Vh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "rodrigogarrido13@gmail.com",
+        "subject": "=Pedido para revisar: {{ $('Normalizar pedido').first().json.nombre }}",
+        "emailType": "text",
+        "message": "nombre, email, plato, cantidad, observaciones y motivo_interno del agente",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1776,
+        -400
+      ],
+      "id": "b9e32b70-b291-43e9-ae14-d1e4b5d2883f",
+      "name": "Avisar al dueño",
+      "webhookId": "b88b3ec2-b001-49e8-bc22-b991a1532d53",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kFOc0LiqUqLxS1Vh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ",
+          "mode": "list",
+          "cachedResultName": "Emprendimiento Comidas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 653349172,
+          "mode": "list",
+          "cachedResultName": "Pedidos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ/edit#gid=653349172"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Normalizar pedido').first().json.email }}",
+            "Estado": "={{ $('Agente Pedidos').first().json.output.decision }}",
+            "Respuesta": "={{ $('Agente Pedidos').first().json.output.mensaje_cliente }}"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Marca temporal",
+              "displayName": "Marca temporal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "  Día del pedido  ",
+              "displayName": "  Día del pedido  ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Plato",
+              "displayName": "Plato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cantidad",
+              "displayName": "Cantidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Observaciones",
+              "displayName": "Observaciones",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Respuesta",
+              "displayName": "Respuesta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2160,
+        -608
+      ],
+      "id": "4e4e1714-3bec-4edf-b39a-185ce862cbf2",
+      "name": "Registrar estado",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "vOZx3Vdk2n2ZEIDq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalizar pedido').first().json.email }}",
+        "subject": "Tu pedido - Emprendimiento Comidas",
+        "emailType": "text",
+        "message": "=Hola {{ $('Normalizar pedido').first().json.nombre }}, no pudimos procesar tu pedido de \"{{ $('Normalizar pedido').first().json.plato }}\" para el {{ $('Normalizar pedido').first().json.dia }}. Ese plato no figura en el menú de ese día o la cantidad indicada no es válida. Revisá el menú de la semana y volvé a enviar tu pedido por el formulario. ¡Gracias! El equipo",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        176
+      ],
+      "id": "ac17e70f-9890-4782-adc4-c1b0568143aa",
+      "name": "Rechazo por validación",
+      "webhookId": "b41bfa60-5b96-45ed-89ad-ded8ad6ce3d9",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kFOc0LiqUqLxS1Vh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ",
+          "mode": "list",
+          "cachedResultName": "Emprendimiento Comidas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 653349172,
+          "mode": "list",
+          "cachedResultName": "Pedidos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iECnM2zyJztxEQK2tEarTQNdRyscw3o5JyzUa0MV0VQ/edit#gid=653349172"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $('Normalizar pedido').first().json.email }}",
+            "Estado": "rechazado_validacion",
+            "Respuesta": "Plato inexistente en ese día o cantidad inválida"
+          },
+          "matchingColumns": [
+            "Email"
+          ],
+          "schema": [
+            {
+              "id": "Marca temporal",
+              "displayName": "Marca temporal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Nombre",
+              "displayName": "Nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "  Día del pedido  ",
+              "displayName": "  Día del pedido  ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Plato",
+              "displayName": "Plato",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Cantidad",
+              "displayName": "Cantidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Observaciones",
+              "displayName": "Observaciones",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Estado",
+              "displayName": "Estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Respuesta",
+              "displayName": "Respuesta",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1184,
+        176
+      ],
+      "id": "5f672763-2326-411e-b987-6879a0540633",
+      "name": "Registrar rechazo",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "vOZx3Vdk2n2ZEIDq",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=PEDIDO DEL CLIENTE\nNombre: {{ $('Normalizar pedido').first().json.nombre }}\nDía: {{ $('Normalizar pedido').first().json.dia }}\nPlato: {{ $('Normalizar pedido').first().json.plato }}\nCantidad: {{ $('Normalizar pedido').first().json.cantidad }}\nObservaciones: {{ $('Normalizar pedido').first().json.observaciones }}\n\nMENÚ SEMANAL (con stock actual)\n{{ JSON.stringify($json.menu) }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "Sos el asistente de pedidos de un emprendimiento de comidas caseras. Tu tarea es revisar cada pedido que llega por formulario y decidir qué hacer con él, con tono amable, cercano y breve, tratando al cliente de \"vos\".\n\nDATOS QUE RECIBÍS\n- El pedido del cliente (nombre, día, plato, cantidad, observaciones).\n- El menú semanal con ingredientes y stock actual.\n- Una herramienta \"consultar_politicas\" con las reglas del emprendimiento: horarios, zonas de entrega, cantidades máximas, alérgenos por plato, cancelaciones y pedidos especiales.\n\nPROCESO\n1. Consultá SIEMPRE la herramienta \"consultar_politicas\" antes de decidir. Si las observaciones mencionan alergias, celiaquía o dietas, consultá también los alérgenos del plato.\n2. Comparás el pedido con el menú y las políticas.\n3. Elegí UNA sola decisión:\n   - \"confirmar\": el plato está en el menú ese día, hay stock suficiente (stock >= cantidad), la cantidad es de hasta 6 y no hay observaciones que requieran revisión.\n   - \"rechazar\": no hay stock suficiente. En el mensaje podés sugerir otro plato del MISMO día si existe en el menú.\n   - \"derivar\": hay que revisarlo el dueño. Ocurre si: la cantidad supera 6, hay alergia grave o celiaquía, se pide una modificación de ingredientes o un menú especial, es un pedido para evento, una dieta vegana, o un reclamo.\n   - \"pedir_datos\": falta información para decidir o las observaciones son ambiguas.\n\nQUÉ NO PODÉS HACER\n- No inventes platos, precios, ingredientes ni políticas que no estén en el menú o en la herramienta.\n- No confirmes nunca un pedido con alergia grave o celiaquía, aunque el plato parezca apto: siempre se deriva.\n- No prometas descuentos, plazos ni cambios que no figuren en las políticas.\n- No resuelvas reclamos ni cancelaciones: se derivan.\n- Si algo está fuera de tu alcance o no estás seguro, elegí \"derivar\". Ante la duda, derivar es mejor que confirmar mal.\n\nFORMATO DE RESPUESTA\nRespondé solo con el JSON pedido. El campo \"mensaje_cliente\" es el texto que se le enviará por mail al cliente (máximo 4 oraciones, sin tecnicismos, firmado como \"El equipo\"). El campo \"motivo_interno\" explica en una frase por qué tomaste esa decisión."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1008,
+        -496
+      ],
+      "id": "86747ba5-6dd1-43ca-806a-39c49408ee57",
+      "name": "Agente Pedidos",
+      "retryOnFail": true,
+      "maxTries": 2,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "rodrigogarrido13@gmail.com",
+        "subject": "Error en Agente Pedidos",
+        "emailType": "text",
+        "message": "=Falló el pedido de {{ $('Normalizar pedido').first().json.email }}. Revisar la ejecución en n8n.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1856,
+        -64
+      ],
+      "id": "7b685a80-2259-45cc-9e63-7a75fb722d24",
+      "name": "Alerta de error",
+      "webhookId": "eeea95d2-cd54-4340-b9cb-06079604eff2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "kFOc0LiqUqLxS1Vh",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "keep": "lastItems"
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        -128
+      ],
+      "id": "eff442de-b142-42c0-acab-f39f9acee8f1",
+      "name": "Limit"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar pedido": {
+      "main": [
+        [
+          {
+            "node": "Leer menú",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer menú": {
+      "main": [
+        [
+          {
+            "node": "Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pedido válido?": {
+      "main": [
+        [
+          {
+            "node": "Agente Pedidos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rechazo por validación",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente Pedidos",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_politicas": {
+      "ai_tool": [
+        [
+          {
+            "node": "Agente Pedidos",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "consultar_politicas",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Agente Pedidos",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Menu": {
+      "main": [
+        [
+          {
+            "node": "Pedido válido?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Según decisión": {
+      "main": [
+        [
+          {
+            "node": "Responder cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar al dueño",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Responder cliente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta de error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avisar al dueño": {
+      "main": [
+        [
+          {
+            "node": "Responder cliente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder cliente": {
+      "main": [
+        [
+          {
+            "node": "Registrar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rechazo por validación": {
+      "main": [
+        [
+          {
+            "node": "Registrar rechazo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente Pedidos": {
+      "main": [
+        [
+          {
+            "node": "Según decisión",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alerta de error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Normalizar pedido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0d23aabf-f53d-48bd-8e08-57bbdfdbb457",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "555b6ae24db72f44710b22a0daccd1dfc3ed1d17a530ddb82a61895db6c9a2b5"
+  },
+  "nodeGroups": [],
+  "id": "9KjxiKMlbWByaVBp",
+  "tags": []
+}

@@ -1,0 +1,180 @@
+{
+  "name": "Carga RAG Comidas",
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.4,
+      "position": [
+        144,
+        -112
+      ],
+      "id": "75a8d19e-aa67-4da4-b371-df155d7c8e06",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "EV2XBZXUJnG2yeJe",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        96,
+        144
+      ],
+      "id": "3f391b85-c19f-454a-b856-5d320ad4c2b5",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "8p2KH0IlNtLALLxP",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        -112
+      ],
+      "id": "db2262ce-485b-47bb-a12d-8a0c8926dc3c",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1e3ixxH3xrSZjgkj8ce804PMncmiuc9HcA7ZdNRE6TDA/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocs",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -112
+      ],
+      "id": "6e60330c-ae23-4e43-a4bd-685e5c06908d",
+      "name": "Get a document",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "jIZnxJIXsIyHJsqW",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        288,
+        96
+      ],
+      "id": "a1ea5bdf-3de4-4bd9-8d44-37766cd7cb6b",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 300,
+        "chunkOverlap": 30,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        336,
+        272
+      ],
+      "id": "be16c20f-4b7d-456d-98b9-ba3fab35ee96",
+      "name": "Recursive Character Text Splitter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "420d2a0e-afde-431a-88c2-021af7bb32ac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "555b6ae24db72f44710b22a0daccd1dfc3ed1d17a530ddb82a61895db6c9a2b5"
+  },
+  "nodeGroups": [],
+  "id": "cLT8ufpM5FppTwvn",
+  "tags": []
+}
